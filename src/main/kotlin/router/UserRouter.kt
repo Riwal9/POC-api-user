@@ -4,7 +4,6 @@ import io.javalin.ApiBuilder.*
 import io.javalin.Javalin
 
 fun main(args: Array<String>) {
-
     val app = Javalin.create().apply {
         port(7000)
         exception(Exception::class.java) { e, _ -> e.printStackTrace() }
