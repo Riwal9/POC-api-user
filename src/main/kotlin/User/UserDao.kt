@@ -1,6 +1,5 @@
-package dao
+package User
 
-import model.User
 
 class UserDao {
  val users = listOf<User>()

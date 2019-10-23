@@ -7,33 +7,33 @@ fun main(args: Array<String>) {
     val app = Javalin.create().apply {
         port(7000)
         exception(Exception::class.java) { e, _ -> e.printStackTrace() }
-        error(404) { ctx -> ctx.json("coucou") }
+        error(404) { ctx -> ctx.json("Not found") }
     }.start()
 
     app.routes {
 
         get("/users") { ctx ->
-            ctx.status(501)
+            ctx.json("Get all users")
+            }
+
+        get("/users/:uuid") { ctx ->
+            ctx.json("Get one specific user")
         }
 
-        get("/users/:uid") { ctx ->
-            ctx.status(501)
+        put("/users/:uuid") { ctx ->
+            ctx.json("Update user")
         }
 
-        put("/users/:uid") { ctx ->
-            ctx.status(501)
+        delete("/users/:uuid") { ctx ->
+            ctx.json("Delete user")
         }
 
-        delete("/users/:uid") { ctx ->
-            ctx.status(501)
+        post("/users/:uuid/subscribe") { ctx ->
+            ctx.json("Subscribe to user")
         }
 
-        post("/users/:uid/subscribe") { ctx ->
-            ctx.status(501)
-        }
-
-        post("/users/:uid/unsubscribe") { ctx ->
-            ctx.status(501)
+        post("/users/:uuid/unsubscribe") { ctx ->
+            ctx.json("Unsubscribe to user")
         }
 
     }
