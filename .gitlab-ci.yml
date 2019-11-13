@@ -1,0 +1,4 @@
+include:
+  - project: 'instalitre/ci-workflow'
+    ref: master
+    file: 'kotlin.gitlab-ci.yml'
