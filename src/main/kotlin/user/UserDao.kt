@@ -92,4 +92,11 @@ class UserDao() {
         return users
     }
 
+    fun deleteUser(uuid: UUID?): String {
+        transaction {
+            User.deleteWhere { User.id eq uuid }
+        }
+        return "User deleted"
+    }
+
 }

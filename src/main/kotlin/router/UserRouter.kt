@@ -41,7 +41,10 @@ fun main(args: Array<String>) {
         }
 
         delete("/users/:uuid") { ctx ->
-            ctx.json("Delete user")
+            ctx.result(
+                userDAO.deleteUser(UUID.fromString(ctx.param("uuid")))
+            )
+            ctx.status(204)
         }
 
         post("/users/:uuid/subscribe") { ctx ->
