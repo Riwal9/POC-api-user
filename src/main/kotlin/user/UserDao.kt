@@ -3,6 +3,7 @@ package user
 import com.google.gson.GsonBuilder
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+
 import user.model.User
 import user.model.UserObject
 import java.util.*
@@ -38,7 +39,7 @@ class UserDao() {
     }
 
     fun getUsers(): String {
-        lateinit var query:Query
+        lateinit var query: Query
         transaction {
             query = User.selectAll()
         }
@@ -46,13 +47,29 @@ class UserDao() {
     }
 
     fun getUser(uuid: UUID): String {
-        lateinit var query:Query
+        lateinit var query: Query
         transaction {
             query = User.select { User.id eq uuid }
         }
         return gson.toJson(getUsersFromQuery(query))
     }
 
+    fun updateUser(userJson: String): String {
+        var user: UserObject = gson.fromJson(userJson, UserObject::class.java)
+        transaction {
+            User.update({ User.id eq UUID.fromString(user.uuid) }) {
+                it[last_name] = user.last_name
+                it[first_name] = user.first_name
+                it[phoneNumber] = user.phoneNumber
+                it[email] = user.email
+                it[password] = user.password
+                it[gender] = user.gender
+                it[birth_date] = user.birth_date
+                it[privateAccount] = user.privateAccount
+            }
+        }
+        return "User ${user.uuid} updated"
+    }
 
     private fun getUsersFromQuery(query: Query): MutableList<UserObject> {
         val users = mutableListOf<UserObject>()
@@ -74,4 +91,5 @@ class UserDao() {
         }
         return users
     }
+
 }

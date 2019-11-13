@@ -15,13 +15,13 @@ object User : UUIDTable() {
 
 class UserObject(
     val uuid:String,
-    val last_name: String?,
-    val first_name: String?,
-    val phoneNumber: String?,
+    val last_name: String,
+    val first_name: String,
+    val phoneNumber: String,
     val email: String,
     val password: String,
-    val gender: String?,
-    val birth_date: String?,
-    val privateAccount: String?
+    val gender: String,
+    val birth_date: String,
+    val privateAccount: String
 )
 

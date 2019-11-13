@@ -3,6 +3,7 @@ package router
 import io.javalin.ApiBuilder.*
 import io.javalin.Javalin
 import user.UserDao
+import user.model.User
 import java.util.*
 
 fun main(args: Array<String>) {
@@ -19,18 +20,24 @@ fun main(args: Array<String>) {
             ctx.result(
                 userDAO.getUsers()
             )
+            ctx.status(200)
         }
 
         get("/users/:uuid") { ctx ->
-            ctx.result(userDAO.getUser(UUID.fromString(ctx.param("uuid"))))
+            ctx.result(
+                userDAO.getUser(UUID.fromString(ctx.param("uuid")))
+            )
+            ctx.status(200)
         }
 
+        //TO REMOVE if handled by keycloak
         get("/create") { ctx ->
             ctx.json(userDAO.create())
         }
 
-        put("/users/:uuid") { ctx ->
-            ctx.json("Update user")
+        put("/users") { ctx ->
+            userDAO.updateUser(ctx.body())
+            ctx.status(204)
         }
 
         delete("/users/:uuid") { ctx ->
