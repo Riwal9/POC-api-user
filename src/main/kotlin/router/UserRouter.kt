@@ -2,8 +2,11 @@ package router
 
 import io.javalin.ApiBuilder.*
 import io.javalin.Javalin
+import user.UserDao
+import java.util.*
 
 fun main(args: Array<String>) {
+    val userDAO = UserDao()
     val app = Javalin.create().apply {
         port(7000)
         exception(Exception::class.java) { e, _ -> e.printStackTrace() }
@@ -13,11 +16,17 @@ fun main(args: Array<String>) {
     app.routes {
 
         get("/users") { ctx ->
-            ctx.json("Get all users")
-            }
+            ctx.result(
+                userDAO.getUsers()
+            )
+        }
 
         get("/users/:uuid") { ctx ->
-            ctx.json("Get one specific user")
+            ctx.result(userDAO.getUser(UUID.fromString(ctx.param("uuid"))))
+        }
+
+        get("/create") { ctx ->
+            ctx.json(userDAO.create())
         }
 
         put("/users/:uuid") { ctx ->
@@ -35,6 +44,5 @@ fun main(args: Array<String>) {
         post("/users/:uuid/unsubscribe") { ctx ->
             ctx.json("Unsubscribe to user")
         }
-
     }
 }
