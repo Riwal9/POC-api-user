@@ -1,12 +1,16 @@
 package user
 
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.joda.time.DateTime
 
 import user.model.User
 import user.model.UserObject
+import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.NoSuchElementException
 
 private const val username = utils.USERNAME // provide the username
 private const val password = utils.PASSWORD // provide the corresponding password
@@ -17,6 +21,7 @@ private const val databaseName = utils.DATABASE_NAME
 class UserDao() {
 
     private val gson = GsonBuilder().setPrettyPrinting().create()
+    private var format = SimpleDateFormat("dd-MM-yyy")
 
     init {
         Database.connect(
@@ -25,51 +30,70 @@ class UserDao() {
             user = username,
             password = password
         )
+        transaction {
+            SchemaUtils.create(User)
+        }
     }
 
     // Handled by keycloak ?
-    fun create() {
+    //Test method to remove
+    fun createUser(user: UserObject) {
         transaction {
-            SchemaUtils.create(User)
             User.insert {
-                it[email] = "Marcel"
-                it[password] = "Pagnol"
-            }
-        }
-    }
-
-    fun getUsers(): String {
-        lateinit var query: Query
-        transaction {
-            query = User.selectAll()
-        }
-        return gson.toJson(getUsersFromQuery(query))
-    }
-
-    fun getUser(uuid: UUID): String {
-        lateinit var query: Query
-        transaction {
-            query = User.select { User.id eq uuid }
-        }
-        return gson.toJson(getUsersFromQuery(query))
-    }
-
-    fun updateUser(userJson: String): String {
-        var user: UserObject = gson.fromJson(userJson, UserObject::class.java)
-        transaction {
-            User.update({ User.id eq UUID.fromString(user.uuid) }) {
+                it[id] = UUID.fromString(user.id)
                 it[last_name] = user.last_name
                 it[first_name] = user.first_name
                 it[phoneNumber] = user.phoneNumber
                 it[email] = user.email
                 it[password] = user.password
                 it[gender] = user.gender
-                it[birth_date] = user.birth_date
+                it[birth_date] = DateTime(user.birth_date)
                 it[privateAccount] = user.privateAccount
             }
         }
-        return "User ${user.uuid} updated"
     }
+
+    fun getUsers(): MutableList<UserObject> {
+        lateinit var query: Query
+        transaction {
+            query = User.selectAll()
+        }
+        return getUsersFromQuery(query)
+    }
+
+    fun getUser(uuid: UUID): UserObject {
+        lateinit var query: Query
+        transaction {
+            query = User.select { User.id eq uuid }
+        }
+        if(getUsersFromQuery(query).isEmpty())
+            throw NoSuchElementException("No user found")
+        else
+            return getUsersFromQuery(query).first()
+    }
+
+
+    fun updateUserFromJson(userJson: String): String {
+        var user: UserObject = gson.fromJson(userJson, UserObject::class.java)
+        updateUser(user)
+        return "User ${user.id} updated"
+    }
+
+    fun updateUser(user: UserObject) {
+        transaction {
+            User.update({ User.id eq UUID.fromString(user.id) }) {
+                it[last_name] = user.last_name
+                it[first_name] = user.first_name
+                it[phoneNumber] = user.phoneNumber
+                it[email] = user.email
+                it[password] = user.password
+                it[gender] = user.gender
+                it[birth_date] = DateTime(user.birth_date)
+                it[privateAccount] = user.privateAccount
+            }
+        }
+    }
+
 
     private fun getUsersFromQuery(query: Query): MutableList<UserObject> {
         val users = mutableListOf<UserObject>()
@@ -83,7 +107,7 @@ class UserDao() {
                     it.data[4].toString(),
                     it.data[5].toString(),
                     it.data[6].toString(),
-                    it.data[7].toString(),
+                    format.parse(it.data[7].toString()),
                     it.data[8].toString()
                 )
                 users.add(user)
@@ -92,11 +116,11 @@ class UserDao() {
         return users
     }
 
-    fun deleteUser(uuid: UUID?): String {
+    fun deleteUser(uuid: UUID): Int {
+        var response = 0
         transaction {
-            User.deleteWhere { User.id eq uuid }
+            response = User.deleteWhere { User.id eq uuid }
         }
-        return "User deleted"
+        return response
     }
-
 }

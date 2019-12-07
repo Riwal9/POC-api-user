@@ -1,27 +1,31 @@
 package user.model
 
 import org.jetbrains.exposed.dao.UUIDTable
+import org.jetbrains.exposed.sql.Table
+import org.joda.time.DateTime
+import java.util.*
 
-object User : UUIDTable() {
+object User : Table() {
+    val id = uuid("id").primaryKey()
     val last_name = varchar("last_name", 50)
     val first_name = varchar("first_name", 50)
-    val phoneNumber = varchar("phoneNumber", 50)
+    val phoneNumber = varchar("phoneNumber", 10)
     val email = varchar("email", 50)
     val password = varchar("password", 50)
     val gender = varchar("gender", 50)
-    val birth_date = varchar("birth_date", 50)
+    val birth_date = date("birth_date")
     val privateAccount = varchar("privateAccount", 50)
 }
 
 class UserObject(
-    val uuid:String,
-    val last_name: String,
-    val first_name: String,
-    val phoneNumber: String,
-    val email: String,
-    val password: String,
-    val gender: String,
-    val birth_date: String,
-    val privateAccount: String
+    val id:String,
+    var last_name: String,
+    var first_name: String,
+    var phoneNumber: String,
+    var email: String,
+    var password: String,
+    var gender: String,
+    var birth_date: Date,
+    var privateAccount: String
 )
 
