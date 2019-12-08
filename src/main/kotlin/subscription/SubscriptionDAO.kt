@@ -1,39 +1,31 @@
 package subscription
 
-import com.google.gson.GsonBuilder
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import subscription.model.Subscription
 import subscription.model.SubscriptionObject
 import java.util.*
 import com.google.gson.JsonParser
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-
-
-private const val username = utils.USERNAME // provide the username
-private const val password = utils.PASSWORD // provide the corresponding password
-private const val databaseHost = utils.DATABASE_HOST
-private const val databasePort = utils.DATABASE_PORT
-private const val databaseName = utils.DATABASE_NAME
+import utils.*
 
 class SubscriptionDAO() {
 
     init {
         Database.connect(
-            url = "jdbc:postgresql://$databaseHost:$databasePort/$databaseName",
+            url = "jdbc:postgresql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME",
             driver = "org.postgresql.Driver",
-            user = username,
-            password = password
+            user = USERNAME,
+            password = PASSWORD
         )
         transaction {
             SchemaUtils.create(Subscription)
         }
     }
 
-    fun getSubscriptions(fromString: UUID): MutableList<SubscriptionObject> {
+    fun getSubscriptions(fromUser: UUID): MutableList<SubscriptionObject> {
         lateinit var query: Query
         transaction {
-            query = Subscription.select { (Subscription.fromUser eq fromString) }
+            query = Subscription.select { (Subscription.fromUser eq fromUser) }
             }
         if(getSubscriptionsFromQuery(query).isEmpty())
             throw NoSuchElementException("No users found")
@@ -41,10 +33,10 @@ class SubscriptionDAO() {
     }
 
 
-    fun subscriptionExist(user: UUID, subscribed_to: UUID): Boolean {
+    fun subscriptionExist(fromUser: UUID, subscribed_to: UUID): Boolean {
         lateinit var query: Query
         transaction {
-            query = Subscription.select { (Subscription.fromUser eq user) and (Subscription.subscribed_to eq subscribed_to)}
+            query = Subscription.select { (Subscription.fromUser eq fromUser) and (Subscription.subscribed_to eq subscribed_to)}
         }
         return getSubscriptionsFromQuery(query).isNotEmpty()
     }
@@ -69,7 +61,7 @@ class SubscriptionDAO() {
     }
 
     fun unsubscribe(uuidFrom: UUID, JSONSubscribedTo: String): String {
-        var uuidToSubscribe = JsonParser().parse(JSONSubscribedTo).getAsJsonObject().get("uuidsubscription").asString
+        var uuidToSubscribe = JsonParser().parse(JSONSubscribedTo).asJsonObject.get("uuidsubscription").asString
         return unsubscribe(uuidFrom, UUID.fromString(uuidToSubscribe))
     }
 

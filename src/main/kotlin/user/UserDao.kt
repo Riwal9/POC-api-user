@@ -1,22 +1,16 @@
 package user
 
 import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 
 import user.model.User
 import user.model.UserObject
+import utils.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.NoSuchElementException
-
-private const val username = utils.USERNAME // provide the username
-private const val password = utils.PASSWORD // provide the corresponding password
-private const val databaseHost = utils.DATABASE_HOST
-private const val databasePort = utils.DATABASE_PORT
-private const val databaseName = utils.DATABASE_NAME
 
 class UserDao() {
 
@@ -25,10 +19,10 @@ class UserDao() {
 
     init {
         Database.connect(
-            url = "jdbc:postgresql://$databaseHost:$databasePort/$databaseName",
+            url = "jdbc:postgresql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME",
             driver = "org.postgresql.Driver",
-            user = username,
-            password = password
+            user = USERNAME,
+            password = PASSWORD
         )
         transaction {
             SchemaUtils.create(User)
