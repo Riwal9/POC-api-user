@@ -65,7 +65,7 @@ class Router {
 
             post("/users/:uuid/subscribe") { ctx ->
                 ctx.json("Subscribe to user")
-                var uuidToSubscribe = JsonParser().parse( ctx.body()).getAsJsonObject().get("uuidsubscription").asString
+                var uuidToSubscribe = JsonParser().parse( ctx.body()).asJsonObject.get("uuidsubscription").asString
                 subscriptionDAO.subscribe(UUID.fromString(ctx.param("uuid")), UUID.fromString(uuidToSubscribe))
                 ctx.status(204)
             }

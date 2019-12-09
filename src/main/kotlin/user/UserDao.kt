@@ -4,7 +4,6 @@ import com.google.gson.GsonBuilder
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
-
 import user.model.User
 import user.model.UserObject
 import utils.*
@@ -93,22 +92,27 @@ class UserDao() {
         val users = mutableListOf<UserObject>()
         transaction {
             query.forEach {
-                var user = UserObject(
-                    it.data[0].toString(),
-                    it.data[1].toString(),
-                    it.data[2].toString(),
-                    it.data[3].toString(),
-                    it.data[4].toString(),
-                    it.data[5].toString(),
-                    it.data[6].toString(),
-                    format.parse(it.data[7].toString()),
-                    it.data[8].toString()
-                )
+                var user = associateParams(it)
                 users.add(user)
             }
         }
         return users
     }
+
+    private fun associateParams(rr: ResultRow): UserObject{
+        return UserObject(
+            id = rr.data[0].toString(),
+            last_name = rr.data[1].toString(),
+            first_name = rr.data[2].toString(),
+            phoneNumber = rr.data[3].toString(),
+            email = rr.data[4].toString(),
+            password = rr.data[5].toString(),
+            gender = rr.data[6].toString(),
+            birth_date = format.parse(rr.data[7].toString()),
+            privateAccount = rr.data[8].toString()
+        )
+    }
+
 
     fun deleteUser(uuid: UUID): Int {
         var response = 0

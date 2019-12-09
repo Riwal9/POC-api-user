@@ -28,7 +28,7 @@ class SubscriptionDAO() {
             query = Subscription.select { (Subscription.fromUser eq fromUser) }
             }
         if(getSubscriptionsFromQuery(query).isEmpty())
-            throw NoSuchElementException("No users found")
+            throw NoSuchElementException("User $fromUser not found")
         return getSubscriptionsFromQuery(query)
     }
 
@@ -48,7 +48,7 @@ class SubscriptionDAO() {
                 it[subscribed_to] = uuidToSubscribe
             }
         }
-        return "User$uuidFrom subscribed to User$uuidToSubscribe"
+        return "User$uuidFrom is now subscribed to User$uuidToSubscribe"
     }
 
     fun unsubscribe(uuidFrom: UUID, uuidToSubscribe: UUID): String {
@@ -57,7 +57,7 @@ class SubscriptionDAO() {
                 (Subscription.fromUser eq uuidFrom) and (Subscription.subscribed_to eq uuidToSubscribe)
             }
         }
-        return "User$uuidFrom subscribed to User$uuidToSubscribe"
+        return "User$uuidFrom unsubscribed from User$uuidToSubscribe"
     }
 
     fun unsubscribe(uuidFrom: UUID, JSONSubscribedTo: String): String {
@@ -70,8 +70,8 @@ class SubscriptionDAO() {
         transaction {
             query.forEach {
                 var subscription = SubscriptionObject(
-                    UUID.fromString(it.data[1].toString()),
-                    UUID.fromString(it.data[2].toString())
+                    user = UUID.fromString(it.data[1].toString()),
+                    subscribed_to = UUID.fromString(it.data[2].toString())
                 )
                 subscriptions.add(subscription)
             }
