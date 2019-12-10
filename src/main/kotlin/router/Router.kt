@@ -12,6 +12,7 @@ class Router {
     private val gson = GsonBuilder().setPrettyPrinting().create()
 
     init {
+
         val userDAO = UserDao()
         val subscriptionDAO = SubscriptionDAO()
         val app = Javalin.create().apply {
@@ -74,6 +75,12 @@ class Router {
                 ctx.json("Unsubscribe to user")
                 subscriptionDAO.unsubscribe(UUID.fromString(ctx.param("uuid")), ctx.body())
                 ctx.status(204)
+            }
+            get("/users/check/:token") { ctx ->
+                ctx.result(
+                    gson.toJson(userDAO.checkIfUserIsConnected(ctx.param("token").toString()))
+                )
+                ctx.status(200)
             }
         }
     }

@@ -1,12 +1,20 @@
 package user
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonElement
+
+import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import org.keycloak.OAuth2Constants
+import org.keycloak.admin.client.KeycloakBuilder
 import user.model.User
 import user.model.UserObject
 import utils.*
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.NoSuchElementException
@@ -28,8 +36,6 @@ class UserDao() {
         }
     }
 
-    // Handled by keycloak ?
-    //Test method to remove
     fun createUser(user: UserObject) {
         transaction {
             User.insert {
@@ -59,7 +65,7 @@ class UserDao() {
         transaction {
             query = User.select { User.id eq uuid }
         }
-        if(getUsersFromQuery(query).isEmpty())
+        if (getUsersFromQuery(query).isEmpty())
             throw NoSuchElementException("No user found")
         else
             return getUsersFromQuery(query).first()
@@ -99,7 +105,7 @@ class UserDao() {
         return users
     }
 
-    private fun associateParams(rr: ResultRow): UserObject{
+    private fun associateParams(rr: ResultRow): UserObject {
         return UserObject(
             id = rr.data[0].toString(),
             last_name = rr.data[1].toString(),
@@ -120,5 +126,35 @@ class UserDao() {
             response = User.deleteWhere { User.id eq uuid }
         }
         return response
+    }
+
+    //TOCHANGE
+    fun checkIfUserIsConnected(userToken: String): JsonElement? {
+        //Router()
+        val serverUrl = "https://auth.instalitre.social/auth"
+        val realm = "master"
+        val clientId = "account"
+        val clientSecret = "dd736376-b248-429b-a54f-b78e2e7c3d80"
+
+        val keycloak = KeycloakBuilder.builder()
+            .serverUrl(serverUrl)
+            .realm(realm)
+            .grantType(OAuth2Constants.PASSWORD)
+            .clientId(clientId)
+            .clientSecret(clientSecret)
+            .username("admin")
+            .password("65^gTGW9v4KSpUvkGR")
+            .resteasyClient(ResteasyClientBuilder().connectionPoolSize(10).build())
+            .build()
+
+        getKeycloakPubliKey()
+        return null
+    }
+
+    private fun getKeycloakPubliKey():String{
+        val keys = URL("https://auth.instalitre.social/auth/realms/master/protocol/openid-connect/certs").readText()
+        val key = ObjectMapper().readTree(keys).get("keys").get(0).get("x5c").get(0)
+        println(key.asText())
+        return key.asText()
     }
 }
