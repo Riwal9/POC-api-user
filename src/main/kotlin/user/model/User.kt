@@ -1,8 +1,6 @@
 package user.model
 
-import org.jetbrains.exposed.dao.UUIDTable
 import org.jetbrains.exposed.sql.Table
-import org.joda.time.DateTime
 import java.util.*
 
 object User : Table() {

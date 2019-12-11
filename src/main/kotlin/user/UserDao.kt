@@ -3,7 +3,6 @@ package user
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
-
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -13,13 +12,13 @@ import org.keycloak.admin.client.KeycloakBuilder
 import user.model.User
 import user.model.UserObject
 import utils.*
-import java.net.HttpURLConnection
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.NoSuchElementException
 
-class UserDao() {
+
+class UserDao {
 
     private val gson = GsonBuilder().setPrettyPrinting().create()
     private var format = SimpleDateFormat("dd-MM-yyy")
@@ -28,8 +27,8 @@ class UserDao() {
         Database.connect(
             url = "jdbc:postgresql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME",
             driver = "org.postgresql.Driver",
-            user = USERNAME,
-            password = PASSWORD
+            user = DATABASE_USERNAME,
+            password = DATABASE_PASSWORD
         )
         transaction {
             SchemaUtils.create(User)
@@ -73,7 +72,7 @@ class UserDao() {
 
 
     fun updateUserFromJson(userJson: String): String {
-        var user: UserObject = gson.fromJson(userJson, UserObject::class.java)
+        val user: UserObject = gson.fromJson(userJson, UserObject::class.java)
         updateUser(user)
         return "User ${user.id} updated"
     }
@@ -98,7 +97,7 @@ class UserDao() {
         val users = mutableListOf<UserObject>()
         transaction {
             query.forEach {
-                var user = associateParams(it)
+                val user = associateParams(it)
                 users.add(user)
             }
         }
@@ -128,22 +127,16 @@ class UserDao() {
         return response
     }
 
-    //TOCHANGE
+    //Work In Progress
     fun checkIfUserIsConnected(userToken: String): JsonElement? {
-        //Router()
-        val serverUrl = "https://auth.instalitre.social/auth"
-        val realm = "master"
-        val clientId = "account"
-        val clientSecret = "dd736376-b248-429b-a54f-b78e2e7c3d80"
-
         val keycloak = KeycloakBuilder.builder()
-            .serverUrl(serverUrl)
-            .realm(realm)
+            .serverUrl(KEYCLOAK_SERVER_URL)
+            .realm(KEYCLOAK_REALM)
             .grantType(OAuth2Constants.PASSWORD)
-            .clientId(clientId)
-            .clientSecret(clientSecret)
-            .username("admin")
-            .password("65^gTGW9v4KSpUvkGR")
+            .clientId(KEYCLOAK_CLIENT_ID)
+            .clientSecret(KEYCLOAK_CLIENT_SECRET)
+            .username(KEYCLOAK_USERNAME)
+            .password(KEYCLOAK_PASSWORD)
             .resteasyClient(ResteasyClientBuilder().connectionPoolSize(10).build())
             .build()
 
@@ -151,10 +144,10 @@ class UserDao() {
         return null
     }
 
+    //Work In Progress
     private fun getKeycloakPubliKey():String{
-        val keys = URL("https://auth.instalitre.social/auth/realms/master/protocol/openid-connect/certs").readText()
+        val keys = URL(KEYCLOAK_SERVER_URL + "/realms/master/protocol/openid-connect/certs").readText()
         val key = ObjectMapper().readTree(keys).get("keys").get(0).get("x5c").get(0)
-        println(key.asText())
         return key.asText()
     }
 }

@@ -8,14 +8,14 @@ import java.util.*
 import com.google.gson.JsonParser
 import utils.*
 
-class SubscriptionDAO() {
+class SubscriptionDAO {
 
     init {
         Database.connect(
             url = "jdbc:postgresql://$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME",
             driver = "org.postgresql.Driver",
-            user = USERNAME,
-            password = PASSWORD
+            user = DATABASE_USERNAME,
+            password = DATABASE_PASSWORD
         )
         transaction {
             SchemaUtils.create(Subscription)
@@ -61,7 +61,7 @@ class SubscriptionDAO() {
     }
 
     fun unsubscribe(uuidFrom: UUID, JSONSubscribedTo: String): String {
-        var uuidToSubscribe = JsonParser().parse(JSONSubscribedTo).asJsonObject.get("uuidsubscription").asString
+        val uuidToSubscribe = JsonParser().parse(JSONSubscribedTo).asJsonObject.get("uuidsubscription").asString
         return unsubscribe(uuidFrom, UUID.fromString(uuidToSubscribe))
     }
 
@@ -69,7 +69,7 @@ class SubscriptionDAO() {
         val subscriptions = mutableListOf<SubscriptionObject>()
         transaction {
             query.forEach {
-                var subscription = SubscriptionObject(
+                val subscription = SubscriptionObject(
                     user = UUID.fromString(it.data[1].toString()),
                     subscribed_to = UUID.fromString(it.data[2].toString())
                 )
