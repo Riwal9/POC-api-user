@@ -1,4 +1,5 @@
-API-USER created with Javalin : https://github.com/tipsy/javalin
+API-USER created with Javalin : https://github.com/tipsy/javalin and Kotlin : https://kotlinlang.org/
+
 Usages : 
 - Handle users from a social network with subscriptions
 - You can create/modify/delete users or subscriptions
