@@ -1,3 +1,19 @@
+Suivez l'équipe sur Twitter !
+<p align=center>
+<a href="https://twitter.com/intent/follow?screen_name=shields_io">
+        <img src="https://img.shields.io/twitter/follow/LeFaou?style=social&logo=twitter"
+            alt="follow on Twitter"></a>
+<a href="https://twitter.com/intent/follow?screen_name=shields_io">
+    <img src="https://img.shields.io/twitter/follow/manon_rambaud_1?style=social&logo=twitter"
+        alt="follow on Twitter"></a>
+<a href="https://twitter.com/intent/follow?screen_name=shields_io">
+    <img src="https://img.shields.io/twitter/follow/SPerols?style=social&logo=twitter"
+        alt="follow on Twitter"></a>
+<a href="https://twitter.com/intent/follow?screen_name=shields_io">
+    <img src="https://img.shields.io/twitter/follow/martin_gadan?style=social&logo=twitter"
+        alt="follow on Twitter"></a>
+</p>
+
 API-USER created with Javalin : https://github.com/tipsy/javalin and Kotlin : https://kotlinlang.org/
 
 Usages : 
