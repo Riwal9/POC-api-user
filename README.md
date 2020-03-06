@@ -1,15 +1,15 @@
 Suivez l'équipe sur Twitter !
 <p>
-<a href="https://twitter.com/intent/follow?screen_name=shields_io" target="_blank">
+<a href="https://twitter.com/intent/follow?screen_name=LeFaou" target="_blank">
         <img src="https://img.shields.io/twitter/follow/LeFaou?style=social&logo=twitter"
             alt="follow on Twitter"></a>
-<a href="https://twitter.com/intent/follow?screen_name=shields_io" target="_blank">
+<a href="https://twitter.com/intent/follow?screen_name=manon_rambaud_1" target="_blank">
     <img src="https://img.shields.io/twitter/follow/manon_rambaud_1?style=social&logo=twitter"
         alt="follow on Twitter"></a>
-<a href="https://twitter.com/intent/follow?screen_name=shields_io" target="_blank">
+<a href="https://twitter.com/intent/follow?screen_name=SPerols" target="_blank">
     <img src="https://img.shields.io/twitter/follow/SPerols?style=social&logo=twitter"
         alt="follow on Twitter"></a>
-<a href="https://twitter.com/intent/follow?screen_name=shields_io" target="_blank">
+<a href="https://twitter.com/intent/follow?screen_name=martin_gadan" target="_blank">
     <img src="https://img.shields.io/twitter/follow/martin_gadan?style=social&logo=twitter"
         alt="follow on Twitter"></a>
 </p>
