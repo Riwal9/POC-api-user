@@ -1,8 +1,8 @@
 Suivez l'équipe sur Twitter !
 <p>
-<a href="https://twitter.com/intent/follow?screen_name=LeFaou" target="_blank">
+<a href="https://twitter.com/intent/follow?screen_name=LeFaou">
         <img src="https://img.shields.io/twitter/follow/LeFaou?style=social&logo=twitter"
-            alt="follow on Twitter"></a>
+            alt="follow on Twitter" target="_blank"></a>
 <a href="https://twitter.com/intent/follow?screen_name=manon_rambaud_1" target="_blank">
     <img src="https://img.shields.io/twitter/follow/manon_rambaud_1?style=social&logo=twitter"
         alt="follow on Twitter"></a>
